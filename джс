@@ -1,0 +1,99 @@
+class Employee {
+  constructor(name, lastName, baseSalary, experience) {
+    this.name = name;
+    this.lastName = lastName;
+    this.baseSalary = baseSalary;
+    this.experience = experience;
+  }
+
+  countedSalary() {
+    let countedSalary = this.baseSalary;
+    if (this.experience > 2) {
+      countedSalary += 200;
+    }
+    if (this.experience > 5) {
+      countedSalary = this.baseSalary * 1.2 + 500;
+    }
+    return countedSalary;
+  }
+
+  toString() {
+    return `${this.name} ${this.lastName} отримав ${this.countedSalary()} шекелей`;
+  }
+}
+
+class Designer extends Employee {
+  constructor(name, lastName, baseSalary, experience, effCoeff) {
+    super(name, lastName, baseSalary, experience);
+    this.effCoeff = effCoeff;
+  }
+
+  countedSalary() {
+    let countedSalary = super.countedSalary() * this.effCoeff;
+    return countedSalary;
+  }
+}
+
+class Manager extends Employee {
+  constructor(name, lastName, baseSalary, experience, team) {
+    super(name, lastName, baseSalary, experience);
+    this.team = team;
+  }
+
+  countedSalary() {
+    let countedSalary = super.countedSalary();
+    const teamSize = this.team.length;
+
+    if (teamSize > 5) {
+      countedSalary += 200;
+    }
+    if (teamSize > 10) {
+      countedSalary += 300;
+    }
+
+    let devCount = 0;
+    for (const employee of this.team) {
+      if (employee instanceof Developer) {
+        devCount++;
+      }
+    }
+
+    if (devCount > this.team.length / 2) {
+      countedSalary *= 1.1;
+    }
+
+    return countedSalary;
+  }
+
+  toString() {
+    const teamStr = this.team.map(e => e.toString()).join(', ');
+    return `${this.name} ${this.lastName} (команда: ${teamStr}) отримав ${this.countedSalary()} шекелей`;
+  }
+}
+
+class Department {
+  constructor(managers) {
+    this.managers = managers;
+  }
+
+  giveSalary() {
+    for (const manager of this.managers) {
+      console.log(manager);
+      for (const employee of manager.team) {
+        console.log(employee);
+      }
+    }
+  }
+}
+
+const developer1 = new Developer("Андрій", "Петренко", 15000, 3);
+const developer2 = new Developer("Олена", "Іванова", 12000, 6);
+
+const designer1 = new Designer("Тетяна", "Попова", 18000, 4, 0.8);
+const designer2 = new Designer("Ігор", "Сидоров", 16500, 5, 0.9);
+
+const manager1 = new Manager("Сергій", "Васильєв", 25000, 7, [developer1, designer1]);
+const manager2 = new Manager("Ірина", "Гончаренко", 28000, 8, [developer2, designer2]);
+
+const department = new Department([manager1, manager2]);
+department.giveSalary();
